@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>D3 courses - FirstPage</title>
+    <script type="text/javascript" src="./d3.js"></script>
+  </head>
+  <body>
+	
+	<h1>Starting with D3.js</h1>
+	
+	<h2>Binding datas</h2>
+	<p>Data with JSON syntax</p>
+	<div id="svg1"></div>
+	</br>
+	</br>
+	<hr/>
+
+<script>
+
+// set the dimensions and margins of the graph
+var margin = {top: 10, right: 30, bottom: 30, left: 100},
+    width = 460 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;   
+
+// append the svg object to the body of the page
+var svgdataviz = d3.select("#svg1")
+  .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+          
+// Create data
+var data = [ 
+    {x:1, "country":"Chine", y:1355045511},
+    {x:2, "country":"Inde", y:1210193422},
+    {x:3, "country":"Ã‰tats-Unis", y:315664478},
+    {x:4, "country":"IndonÃ©sie", y:237641326},
+    {x:5, "country":"BrÃ©sil", y:193946886},
+    {x:6, "country":"Pakistan", y:182614855},	
+    {x:7, "country":"Nigeria", y:174507539},
+    {x:8, "country":"Bangladesh", y:152518015},	
+    {x:9, "country":"Russie", y:143056383},
+    {x:10, "country":"Japon", y:127650000}
+];
+
+// X axis: scale and draw:
+var x = d3.scaleLinear()
+  .domain([1, 10])     
+  .range([0, width]);
+svgdataviz.append("g")
+  .attr("transform", "translate(0," + height + ")")
+  .call(d3.axisBottom(x));
+  
+// set the parameters for the histogram
+var histogram = d3.histogram()
+  .value(function(d) { return d.x; })   // I need to give the vector of value
+  .domain(x.domain())  // then the domain of the graphic
+  .thresholds(x.ticks(70)); // then the numbers of bins  
+
+// And apply this function to data to get the bins
+var bins = histogram(data);
+
+// Y axis: scale and draw:
+var y = d3.scaleLinear()
+  .range([height, 0]);
+  y.domain([0, 1355045511]);   
+svgdataviz.append("g")
+  .call(d3.axisLeft(y));
+          	
+
+// append the bar rectangles to the svg element
+svgdataviz.selectAll("rect")
+  .data(data)
+  .enter()
+  .append("rect")
+	.attr("x", 0)
+	.attr("transform", function(d) { return "translate(" + x(d.x) + "," + y(d.y) + ")"; })
+	.attr("width", 10)
+	.attr("height", function(d) { return height - y(d.y); })
+	.style("fill", "#5e33ff")
+ 
+</script>
+	
+  </body>
+</html>
