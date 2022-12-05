@@ -138,7 +138,7 @@ function GenerateGraph(data) {
   
   // Add Y axis
   const y = d3.scaleLinear()
-  .domain([0, 2000000])
+  .domain([0, 40000000])
   .range([ height, 0 ]);
   svg.append("g")
   .call(d3.axisLeft(y));
