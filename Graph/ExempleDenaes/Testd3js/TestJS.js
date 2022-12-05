@@ -170,6 +170,31 @@ function GenerateGraph(data) {
   .attr("fill", d => color(d.key));
   
 }
+
+function UpdateYear(annee){
+  svg.selectAll('*').remove();
+  console.log('Reload year ' + annee);
+  switch (annee) {
+    case '2016':
+      GenerateGraph(DataCompareElecGaz2016);
+    break;
+    case '2017':
+      GenerateGraph(DataCompareElecGaz2017);
+    break;
+    case '2018':
+      GenerateGraph(DataCompareElecGaz2018);
+    break;
+    case '2019':
+      GenerateGraph(DataCompareElecGaz2019);
+    break;
+    case '2020':
+      GenerateGraph(DataCompareElecGaz2020);
+    break;
+    
+    default:
+    break;
+  }
+}
 //#endregion Function
 
 //#region Traitement

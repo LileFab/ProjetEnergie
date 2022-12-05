@@ -8,7 +8,14 @@
 </head>
 
 <body>
-    <p>Graph 1</p>
+    <p id="title">Consommation d'électricité par région en MWh</p>
+    <select onChange="UpdateYear(this.value)" name="Année" id="yearSelect">
+        <option value="2016">2016</option>
+        <option value="2017">2017</option>
+        <option value="2018">2018</option>
+        <option value="2019">2019</option>
+        <option selected value="2020">2020</option>
+    </select>
     <div id="barplot_compare"></div>
     <script type="text/javascript" src="./TestJS.js"></script>
 </body>
