@@ -118,10 +118,10 @@ function FilterData(data){
 
 function GenerateGraph(data) {
   console.log(data);
-
+  
   const subgroups = Object.getOwnPropertyNames(data[0]).slice(5);
   const groups = data.map(d => d.lblRegion);
-
+  
   const maxElec = Math.ceil(d3.max(data, function(d) { return d.consoElecTotal; }) / 5) * 5;
   const maxGaz = Math.ceil(d3.max(data, function(d) { return d.consoGazTotal; }) / 5) * 5;
   const maxY = maxElec <= maxGaz ? maxGaz : maxElec;
@@ -158,50 +158,62 @@ function GenerateGraph(data) {
   .range(['#198D8E','#71E0E9'])
   
   // Show the bars
-  svg.append("g")
+  var slice = svg.append("g")
   .selectAll("g")
   // Enter in data = loop group per group
   .data(data)
   .join("g")
-  .attr("transform", d => `translate(${x(d.lblRegion)}, 0)`)
-  .selectAll("rect")
+  .attr("transform", d => `translate(${x(d.lblRegion)}, 0)`);
+  
+  slice.selectAll("rect")
   .data(function(d) { return subgroups.map(function(key) { return {key: key, value: d[key]}; }); })
   .join("rect")
   .attr("x", d => xSubgroup(d.key))
-  .attr("y", d => y(d.value) - 1)
+  .attr("y", () => y(0) - 1)
   .attr("width", xSubgroup.bandwidth())
-  .attr("height", d => height - y(d.value))
-  .attr("fill", d => color(d.key));
-
+  .attr("height", () => height - y(0))
+  .attr("fill", d => color(d.key))
+  .on("mouseover", function(d) {
+  })
+  .on("mouseout", function(d) {
+  });
+  
+  slice.selectAll("rect")
+  .transition()
+  .delay(() => Math.random()*1000)
+  .duration(1000)
+  .attr("y", d => y(d.value) - 1)
+  .attr("height", d => height - y(d.value));
+  
   // Legende
   const lblLegend = ['Consommation totale d\'électricité', 'Consommation totale de gaz'];
-
+  
   var legend = svg.selectAll(".legend")
-        .data(lblLegend)
-        .enter().append("g")
-        .attr("class", "legend")
-        .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
-
-    legend.append("rect")
-        .attr("x", width + 18)
-        .attr("width", 18)
-        .attr("height", 18)
-        .style("fill", color);
-
-    legend.append("text")
-        .attr("x", width + 40)
-        .attr("y", 9)
-        .attr("dy", ".35em")
-        .style("text-anchor", "start")
-        .text(function(d) { return d; });
+  .data(lblLegend)
+  .enter().append("g")
+  .attr("class", "legend")
+  .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+  
+  legend.append("rect")
+  .attr("x", width + 18)
+  .attr("width", 18)
+  .attr("height", 18)
+  .style("fill", color);
+  
+  legend.append("text")
+  .attr("x", width + 40)
+  .attr("y", 9)
+  .attr("dy", ".35em")
+  .style("text-anchor", "start")
+  .text(function(d) { return d; });
   
   // Axes Y label
   svg.append("text")
-    .attr("class", "y label")
-    .attr("text-anchor", "start")
-    .attr("y", - margin.top / 3)
-    .attr("x", - margin.left / 2)
-    .text("Consommation (MWh)");
+  .attr("class", "y label")
+  .attr("text-anchor", "start")
+  .attr("y", - margin.top / 3)
+  .attr("x", - margin.left / 2)
+  .text("Consommation (MWh)");
 }
 
 function UpdateYear(annee){
@@ -209,19 +221,19 @@ function UpdateYear(annee){
   console.log('Reload year ' + annee);
   switch (annee) {
     case '2016':
-      GenerateGraph(DataCompareElecGaz2016);
+    GenerateGraph(DataCompareElecGaz2016);
     break;
     case '2017':
-      GenerateGraph(DataCompareElecGaz2017);
+    GenerateGraph(DataCompareElecGaz2017);
     break;
     case '2018':
-      GenerateGraph(DataCompareElecGaz2018);
+    GenerateGraph(DataCompareElecGaz2018);
     break;
     case '2019':
-      GenerateGraph(DataCompareElecGaz2019);
+    GenerateGraph(DataCompareElecGaz2019);
     break;
     case '2020':
-      GenerateGraph(DataCompareElecGaz2020);
+    GenerateGraph(DataCompareElecGaz2020);
     break;
     
     default:
