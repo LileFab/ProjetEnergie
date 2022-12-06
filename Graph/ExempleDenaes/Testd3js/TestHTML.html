@@ -13,6 +13,20 @@
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             font-size: 60%;
         }
+        
+        .ToolTip {
+            position: absolute;
+            display: none;
+            width: auto;
+            height: auto;
+            background: #515A5A;
+            border: 0 none;
+            border-radius: 4px;
+            color: #FFFFFF;
+            font: 12px sans-serif;
+            padding: 5px;
+            text-align: center;
+        } 
     </style>
     <p id="title">Consommation d'électricité par région en MWh</p>
     <select onChange="UpdateYear(this.value)" name="Année" id="yearSelect">
@@ -22,6 +36,7 @@
         <option value="2019">2019</option>
         <option selected value="2020">2020</option>
     </select>
+    <div class="ToolTip"></div>
     <div id="barplot_compare"></div>
     <script type="text/javascript" src="./TestJS.js"></script>
 </body>
