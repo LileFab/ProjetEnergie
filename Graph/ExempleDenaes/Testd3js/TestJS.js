@@ -1,5 +1,5 @@
 // set the dimensions and margins of the graph
-const margin = {top: 10, right: 30, bottom: 200, left: 100},
+const margin = {top: 10, right: 200, bottom: 200, left: 100},
 width = 1000 - margin.left - margin.right,
 height = 600 - margin.top - margin.bottom;
 
@@ -146,13 +146,12 @@ function GenerateGraph(data) {
   // Another scale for subgroup position?
   const xSubgroup = d3.scaleBand()
   .domain(subgroups)
-  .range([0, x.bandwidth()])
-  .padding([0.05]);
+  .range([0, x.bandwidth()]);
   
   // color palette = one color per subgroup
   const color = d3.scaleOrdinal()
   .domain(subgroups)
-  .range(['#377eb8','#e41a1c'])
+  .range(['#198D8E','#71E0E9'])
   
   // Show the bars
   svg.append("g")
@@ -165,10 +164,31 @@ function GenerateGraph(data) {
   .data(function(d) { return subgroups.map(function(key) { return {key: key, value: d[key]}; }); })
   .join("rect")
   .attr("x", d => xSubgroup(d.key))
-  .attr("y", d => y(d.value))
+  .attr("y", d => y(d.value) - 1)
   .attr("width", xSubgroup.bandwidth())
   .attr("height", d => height - y(d.value))
   .attr("fill", d => color(d.key));
+
+const lblLegend = ['Consommation totale d\'électricité', 'Consommation totale de gaz'];
+
+  var legend = svg.selectAll(".legend")
+        .data(lblLegend)
+        .enter().append("g")
+        .attr("class", "legend")
+        .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+    legend.append("rect")
+        .attr("x", width + 18)
+        .attr("width", 18)
+        .attr("height", 18)
+        .style("fill", color);
+
+    legend.append("text")
+        .attr("x", width + 40)
+        .attr("y", 9)
+        .attr("dy", ".35em")
+        .style("text-anchor", "start")
+        .text(function(d) { return d; });
   
 }
 
