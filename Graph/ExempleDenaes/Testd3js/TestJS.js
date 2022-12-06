@@ -1,5 +1,5 @@
 // set the dimensions and margins of the graph
-const margin = {top: 10, right: 200, bottom: 200, left: 100},
+const margin = {top: 40, right: 200, bottom: 200, left: 100},
 width = 1000 - margin.left - margin.right,
 height = 600 - margin.top - margin.bottom;
 
@@ -29,8 +29,8 @@ const promiseLoadData = new Promise((resolve, reject) =>{
         lblDepart : data[i].Libelle_departement,
         codeRegion : parseInt(data[i].Code_region),
         lblRegion : data[i].Libelle_region,
-        consoElecTotal : parseFloat(data[i].Consommation_electricite_totale_MWh),
-        consoGazTotal : parseFloat(data[i].Consommation_gaz_totale_MWh)
+        consoElecTotal : parseFloat(data[i].Consommation_electricite_totale_MWh) / 1000000,
+        consoGazTotal : parseFloat(data[i].Consommation_gaz_totale_MWh) / 1000000
       });
       
       if (i == data.length - 1)
@@ -118,9 +118,13 @@ function FilterData(data){
 
 function GenerateGraph(data) {
   console.log(data);
-  
+
   const subgroups = Object.getOwnPropertyNames(data[0]).slice(5);
   const groups = data.map(d => d.lblRegion);
+
+  const maxElec = Math.ceil(d3.max(data, function(d) { return d.consoElecTotal; }) / 5) * 5;
+  const maxGaz = Math.ceil(d3.max(data, function(d) { return d.consoGazTotal; }) / 5) * 5;
+  const maxY = maxElec <= maxGaz ? maxGaz : maxElec;
   
   // Add X axis
   const x = d3.scaleBand()
@@ -138,7 +142,7 @@ function GenerateGraph(data) {
   
   // Add Y axis
   const y = d3.scaleLinear()
-  .domain([0, 40000000])
+  .domain([0, maxY])
   .range([ height, 0 ]);
   svg.append("g")
   .call(d3.axisLeft(y));
@@ -169,7 +173,8 @@ function GenerateGraph(data) {
   .attr("height", d => height - y(d.value))
   .attr("fill", d => color(d.key));
 
-const lblLegend = ['Consommation totale d\'électricité', 'Consommation totale de gaz'];
+  // Legende
+  const lblLegend = ['Consommation totale d\'électricité', 'Consommation totale de gaz'];
 
   var legend = svg.selectAll(".legend")
         .data(lblLegend)
@@ -190,6 +195,13 @@ const lblLegend = ['Consommation totale d\'électricité', 'Consommation totale 
         .style("text-anchor", "start")
         .text(function(d) { return d; });
   
+  // Axes Y label
+  svg.append("text")
+    .attr("class", "y label")
+    .attr("text-anchor", "start")
+    .attr("y", - margin.top / 3)
+    .attr("x", - margin.left / 2)
+    .text("Consommation (MWh)");
 }
 
 function UpdateYear(annee){
