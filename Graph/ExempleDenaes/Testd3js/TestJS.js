@@ -27,8 +27,12 @@ var DataCompareElecGazRegion2017 = []
 var DataCompareElecGazRegion2018 = []
 var DataCompareElecGazRegion2019 = []
 var DataCompareElecGazRegion2020 = []
+
+var DataDisplayed = [] // Les données actuellement affiché
+var CurrentYearData = [] // Les données correspondant à l'année affiché
 //#endregion Tableau données
 var ListeRegion = [];
+var ListeDepartement = [];
 //#endregion Variables Globales
 
 //#region Promise
@@ -187,12 +191,14 @@ function FilterData(data){
 }
 
 // Méthode de génération du graph à partir d'un tableau de données filtrer par année 
-function GenerateGraph(data) {
+function GenerateGraph(data, isClickable, isRegion) {
   console.log(data);
   
   // Groupe et sous-groupe du graph
   const subgroups = Object.getOwnPropertyNames(data[0]).slice(1);
-  const groups = data.map(d => d.lblRegion);
+  let groups;
+  if (isRegion) groups = data.map(d => d.lblRegion);
+  else groups = data.map(d => d.lblDepart);
   
   // Calcule du max de l'echelle Y
   const maxElec = Math.ceil(d3.max(data, function(d) { return d.consoElecTotal; }) / 5) * 5;
@@ -236,7 +242,10 @@ function GenerateGraph(data) {
   // Enter in data = loop group per group
   .data(data)
   .join("g")
-  .attr("transform", d => `translate(${x(d.lblRegion)}, 0)`);
+  .attr("transform", d => {
+    if (isRegion) return `translate(${x(d.lblRegion)}, 0)`;
+    else return `translate(${x(d.lblDepart)}, 0)`;
+  });
   
   slice.selectAll("rect")
   .data(function(d) { return subgroups.map(function(key) { return {key: key, value: d[key]}; }); })
@@ -264,7 +273,50 @@ function GenerateGraph(data) {
     divTooltip.style("display", "none")
     d3.select(this).transition().duration(250)
     .attr("fill", d => color(d.key));
-  });
+  })
+  .on("click", (d, i) => {
+    if (isClickable == true) {
+      // Récuperation de la region clické
+      const ligne = DataDisplayed.find(data => {
+        let result;
+        if (i.key == 'consoElecTotal') result = data.consoElecTotal === i.value;
+        else result = data.consoGazTotal === i.value;
+        return result;
+      });
+      console.log(ligne.lblRegion);
+      
+      // Génération du tableau de données par département pour la region clické
+      let DataCompareElecGazDepartement = [];
+
+      let DataCurrentRegion = d3.group(CurrentYearData, d => d.lblRegion).get(ligne.lblRegion);
+      let groupParDepartement = d3.group(DataCurrentRegion, d => d.lblDepart);
+      console.log(groupParDepartement);
+
+      ListeDepartement = [...new Set(DataCurrentRegion.map(d => d.lblDepart))];
+      console.log(ListeDepartement);
+
+      ListeDepartement.forEach(departement => {
+          let totalGaz = 0;
+          let totalElec = 0;
+          let LblDepartement;
+          groupParDepartement.get(departement).forEach(element => {
+            totalElec += element.consoElecTotal;
+            totalGaz += element.consoGazTotal;
+            LblDepartement = element.lblDepart;
+            annee = element.annee;
+          });
+          
+          DataCompareElecGazDepartement.push({lblDepart : LblDepartement,
+            consoElecTotal : parseFloat(totalElec),
+            consoGazTotal : parseFloat(totalGaz)
+          });
+        });
+      
+      svg.selectAll('*').remove();
+      GenerateGraph(DataCompareElecGazDepartement, false, false);
+    }
+    
+  });;
   
   // Transition d'apparition
   slice.selectAll("rect")
@@ -311,19 +363,29 @@ function UpdateYear(annee){
   console.log('Reload year ' + annee);
   switch (annee) {
     case '2016':
-    GenerateGraph(DataCompareElecGazRegion2016);
+    DataDisplayed = DataCompareElecGazRegion2016;
+    CurrentYearData = DataCompareElecGaz2016;
+    GenerateGraph(DataCompareElecGazRegion2016, true, true);
     break;
     case '2017':
-    GenerateGraph(DataCompareElecGazRegion2017);
+    DataDisplayed = DataCompareElecGazRegion2017;
+    CurrentYearData = DataCompareElecGaz2017;
+    GenerateGraph(DataCompareElecGazRegion2017, true, true);
     break;
     case '2018':
-    GenerateGraph(DataCompareElecGazRegion2018);
+    DataDisplayed = DataCompareElecGazRegion2018;
+    CurrentYearData = DataCompareElecGaz2018;
+    GenerateGraph(DataCompareElecGazRegion2018, true, true);
     break;
     case '2019':
-    GenerateGraph(DataCompareElecGazRegion2019);
+    DataDisplayed = DataCompareElecGazRegion2019;
+    CurrentYearData = DataCompareElecGaz2019;
+    GenerateGraph(DataCompareElecGazRegion2019, true, true);
     break;
     case '2020':
-    GenerateGraph(DataCompareElecGazRegion2020);
+    DataDisplayed = DataCompareElecGazRegion2020;
+    CurrentYearData = DataCompareElecGaz2020;
+    GenerateGraph(DataCompareElecGazRegion2020, true, true);
     break;
     
     default:
@@ -337,7 +399,9 @@ promiseLoadData.then((resolve) => {
   console.log(resolve);
   promiseFilterDataResolve.then((resolve) => {
     console.log(resolve);
-    GenerateGraph(DataCompareElecGazRegion2020);
+    DataDisplayed = DataCompareElecGazRegion2020;
+    CurrentYearData = DataCompareElecGaz2020;
+    GenerateGraph(DataCompareElecGazRegion2020, true, true);
   });
 });
 //#endregion Traitement
