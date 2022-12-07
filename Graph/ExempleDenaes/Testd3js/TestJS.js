@@ -324,10 +324,12 @@ function GenerateGraph(data, isClickable, isRegion) {
       
       svgRegion.selectAll('*').remove();
       GenerateGraph(DataCompareElecGazDepartement, false, false);
+      d3.select("#title_region").text('Consommation d\'électricité par département en MWh pour la région : ' +ligne.lblRegion);
     }
     else{
       svgRegion.selectAll('*').remove();
-      divTooltip.style("display", "none")
+      divTooltip.style("display", "none");
+      d3.select("#title_region").text('');
     }
     
   });;
@@ -375,6 +377,7 @@ function GenerateGraph(data, isClickable, isRegion) {
 function UpdateYear(annee){
   svgGlobal.selectAll('*').remove();
   svgRegion.selectAll('*').remove();
+  d3.select("#title_region").text('');
   console.log('Reload year ' + annee);
   switch (annee) {
     case '2016':
