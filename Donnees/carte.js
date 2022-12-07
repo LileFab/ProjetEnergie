@@ -17,31 +17,23 @@ var parisMarker = L.marker([48.8566, 2.3522]).addTo(map);
 // Add a popup to the marker
 parisMarker.bindPopup('<b>Paris</b><br>The capital of France'); 
 
-// Read the CSV file
-const data = d3.csv('Donnees2016.csv', function (d) {
-  const arrayCoordx = [];
-  const arrayCoordy = [];
-  arrayCoordx.push(d.coordx)
-  const uniqueArrayx = arrayCoordx.filter(
-		(item, index) => arrayCoordx.indexOf(item) === index,
-	);
+const openP = '<p>';
+const closeP = '</p>';
+const MWh = ' MWh';
 
-  arrayCoordy.push(d.coordy);
-  const uniqueArrayy = arrayCoordy.filter(
-    (item, index) => arrayCoordy.indexOf(item) === index,
-  );
-  for (let i = 0; i < uniqueArrayx.length; i++) {
-    if (
-			typeof uniqueArrayx[i] === undefined &&
-			typeof uniqueArrayy[i] === undefined
-		) {
-      console.log('error no coord');
-		}
-    else {
-      console.log("+1 marker");
-      var current = L.marker([Number(uniqueArrayx[i]), Number(uniqueArrayy[i])]).addTo(map);
-      var pop = d.Libelle_departement;
-      current.bindPopup(pop)
+const data = d3.json('pls.json')
+  .then(
+    function(data) {
+      console.log(data[0]);
+      data.forEach(e => {
+        let xcoord = e[23];
+        let ycoord = e[24];
+        let dep = e[2];
+        let totElec = e[10];
+        let totGaz = e[22];
+        let current = L.marker([xcoord, ycoord]).addTo(map);
+        let pop = openP + 'Département : ' + dep + closeP + openP + 'Consommation totale électricité : ' + totElec + MWh + closeP + openP + 'Consommation totale gaz : ' + totGaz + MWh + closeP
+        current.bindPopup(pop);
+      });
     }
-  }
-});
+  );

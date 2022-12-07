@@ -1,4 +1,4 @@
-import csv
+import json
 
 import numpy as np
 import pandas as pd
@@ -11,10 +11,15 @@ export = []
 
 for dep in unique_columns:
   var = df.loc[df['Code_departement'] == dep]
-  export.append(var.head(1).drop(['Geo-shape_EPCI'], axis=1).to_dict())
+  export.append(var.head(1).drop(['Geo-shape_EPCI'], axis=1).values[0])
 
-print(export)
+grandeArray = []
+for i in range(len(export)):
+  array = []
+  for y in range(len(export[0])):
+    array.append(export[i][y])
+  grandeArray.append(array)
 
-with open('exportDatas', 'w', newline='') as myfile:
-     wr = csv.writer(export, quoting=csv.QUOTE_ALL)
-     wr.writerow(export)
+jsonstr = json.dumps(grandeArray)
+with open('pls.json', 'w') as outfile:
+    outfile.write(jsonstr)
