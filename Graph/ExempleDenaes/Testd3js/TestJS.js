@@ -6,7 +6,14 @@ height = 600 - margin.top - margin.bottom;
 // append the svg object to the body of the page
 const divTooltip = d3.select("div.ToolTip");
 
-const svg = d3.select("#barplot_compare")
+const svgGlobal = d3.select("#barplot_compare")
+.append("svg")
+.attr("width", width + margin.left + margin.right)
+.attr("height", height + margin.top + margin.bottom)
+.append("g")
+.attr("transform",`translate(${margin.left},${margin.top})`);
+
+const svgRegion = d3.select("#barplot_compare_region")
 .append("svg")
 .attr("width", width + margin.left + margin.right)
 .attr("height", height + margin.top + margin.bottom)
@@ -193,7 +200,10 @@ function FilterData(data){
 // Méthode de génération du graph à partir d'un tableau de données filtrer par année 
 function GenerateGraph(data, isClickable, isRegion) {
   console.log(data);
-  
+  let svg;
+  if (isRegion) svg = svgGlobal;
+  else svg = svgRegion; 
+
   // Groupe et sous-groupe du graph
   const subgroups = Object.getOwnPropertyNames(data[0]).slice(1);
   let groups;
@@ -312,8 +322,12 @@ function GenerateGraph(data, isClickable, isRegion) {
           });
         });
       
-      svg.selectAll('*').remove();
+      svgRegion.selectAll('*').remove();
       GenerateGraph(DataCompareElecGazDepartement, false, false);
+    }
+    else{
+      svgRegion.selectAll('*').remove();
+      divTooltip.style("display", "none")
     }
     
   });;
@@ -359,7 +373,8 @@ function GenerateGraph(data, isClickable, isRegion) {
 
 // Méthode déclenché par le selecteur pour changer l'année affiché
 function UpdateYear(annee){
-  svg.selectAll('*').remove();
+  svgGlobal.selectAll('*').remove();
+  svgRegion.selectAll('*').remove();
   console.log('Reload year ' + annee);
   switch (annee) {
     case '2016':
