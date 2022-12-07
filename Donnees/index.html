@@ -10,6 +10,9 @@
    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
    crossorigin=""></script>
   <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/holtzy/D3-graph-gallery@master/LIB/d3-scale-radial.js"></script>
+  <script type="text/javascript" src="./TestJS.js"></script>
+  <script type="text/javascript" src="./filejs.js" defer></script>
   <script src="carte.js" defer></script>
       <style>
       /* set the CSS */
@@ -17,10 +20,53 @@
         width: 960px;
         height: 500px;
       }
+
+      .legend {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 60%;
+        }
+        
+        .ToolTip {
+            position: absolute;
+            display: none;
+            width: auto;
+            height: auto;
+            background: #515A5A;
+            border: 0 none;
+            border-radius: 4px;
+            color: #FFFFFF;
+            font: 12px sans-serif;
+            padding: 5px;
+            text-align: center;
+        } 
     </style>
 </head>
  <body>
     <div id="map"></div>
+    <p id="titleAdri">Consommation d'électricité par région en MWh</p>
+    <select onchange="UpdateYear(this.value)" name="Année" id="yearSelect">
+        <option value="2016">2016</option>
+        <option value="2017">2017</option>
+        <option value="2018">2018</option>
+        <option value="2019">2019</option>
+        <option selected value="2020">2020</option>
+    </select>
+    <div class="ToolTip"></div>
+    <div id="barplot_compare"></div>
+    <p id="title_region"></p>
+    <div id="barplot_compare_region"></div>
+    <p id="title">Consommation d'électricité ou de gaz par secteur et par région</p>
+    <select onchange="ChoixConso(this.value)" name="typeconso" id="consoselect">
+        <option value="gaz">Gaz</option>
+        <option value="electricite">Electricité</option>
+    </select>
+    <div id="all_curcular_barplot">
+        <div id="circular_barplot_agriculture"></div>
+        <div id="circular_barplot_industrie"></div>
+        <div id="circular_barplot_residentiel"></div>
+        <div id="circular_barplot_tertiaire"></div>
+        <div id="circular_barplot_autre"></div>
+    </div>
   </body>
 </html>
 

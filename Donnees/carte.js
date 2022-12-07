@@ -22,7 +22,7 @@ const closeP = '</p>';
 const MWh = ' MWh';
 
 
-const data = d3.json('pls.json')
+const data = d3.json('finalDatas.json')
   .then(
     function(data) {
       data.forEach(e => {
