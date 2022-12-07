@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 # Read the CSV file into a DataFrame
-df = pd.read_csv("Donnees2016.csv")
+df = pd.read_csv("DonneesFabien2016.csv")
 unique_columns = sorted(df['Code_departement'].unique().tolist())
 
 export = []
@@ -23,5 +23,5 @@ for i in range(len(export)):
   grandeArray.append(array)
 
 jsonstr = json.dumps(grandeArray)
-with open('pls.json', 'w') as outfile:
+with open('finalDatas.json', 'w') as outfile:
     outfile.write(jsonstr)
