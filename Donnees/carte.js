@@ -21,10 +21,10 @@ const openP = '<p>';
 const closeP = '</p>';
 const MWh = ' MWh';
 
+
 const data = d3.json('pls.json')
   .then(
     function(data) {
-      console.log(data[0]);
       data.forEach(e => {
         let xcoord = e[23];
         let ycoord = e[24];
