@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html lang="fr">
+<head>
+    <title>Test graphe</title>
+    <script src="https://d3js.org/d3.v6.js"></script>
+    
+</head>
+
+<body>
+    <p id="title">Consommation d'électricité ou de gaz par secteur et par région</p>
+    <select onChange="ChoixConso(this.value)" name="typeconso" id="consoselect">
+        <option value="gaz">Gaz</option>
+        <option value="electricite">Electricité</option>
+    </select>
+    <div id="circular_barplot"></div>
+    <script type="text/javascript" src="./filejs.js" defer></script>
+</body>
