@@ -1,24 +1,24 @@
 // set the dimensions and margins of the graph
-const margin = {top: 40, right: 200, bottom: 200, left: 100},
-width2 = 1000 - margin.left - margin.right,
-height2 = 600 - margin.top - margin.bottom;
+const margin2 = {top: 40, right: 200, bottom: 200, left: 100},
+width2 = 1000 - margin2.left - margin2.right,
+height2 = 600 - margin2.top - margin2.bottom;
 
 // append the svg object to the body of the page
 const divTooltip = d3.select("div.ToolTip");
 
 const svgGlobal = d3.select("#barplot_compare")
 .append("svg")
-.attr("width", width2 + margin.left + margin.right)
-.attr("height", height2 + margin.top + margin.bottom)
+.attr("width", width2 + margin2.left + margin2.right)
+.attr("height", height2 + margin2.top + margin2.bottom)
 .append("g")
-.attr("transform",`translate(${margin.left},${margin.top})`);
+.attr("transform",`translate(${margin2.left},${margin2.top})`);
 
 const svgRegion = d3.select("#barplot_compare_region")
 .append("svg")
-.attr("width", width2 + margin.left + margin.right)
-.attr("height", height2 + margin.top + margin.bottom)
+.attr("width", width2 + margin2.left + margin2.right)
+.attr("height", height2 + margin2.top + margin2.bottom)
 .append("g")
-.attr("transform",`translate(${margin.left},${margin.top})`);
+.attr("transform",`translate(${margin2.left},${margin2.top})`);
 
 //#region Variables Globales
 //#region Tableau données
@@ -45,7 +45,7 @@ var ListeDepartement = [];
 //#region Promise
 // Charge les colonnes necessaire depuis le CSV 
 // Annee,Code_departement,Libelle_departement,Code_region,Libelle_region,Consommation_electricite_totale_MWh,Consommation_gaz_totale_MWh
-const promiseLoadData2 = new Promise((resolve, reject) =>{
+const promiseLoadCsv = new Promise((resolve, reject) =>{
   d3.csv("Donnees2016.csv").then(function(data) {
     for (var i = 0; i<data.length; i++){
       DataCompareElecGaz.push({annee : data[i].Annee, 
@@ -60,17 +60,17 @@ const promiseLoadData2 = new Promise((resolve, reject) =>{
       if (i == data.length - 1)
       {
         resolve('load ok');
-        FilterData(DataCompareElecGaz);
+        SortData(DataCompareElecGaz);
       }
     }
   })
 });
 
-var promiseFilterDataResolve;
+var promiseSortDataResolve;
 //#endregion Promise
 
 //#region Function
-function FilterData(data){
+function SortData(data){
   // Filtrage des données par années
   for (var i = 0; i<data.length; i++){
     switch (data[i].annee) {
@@ -190,19 +190,19 @@ function FilterData(data){
       });      
       
       // Fin du filtrage attendu pour continuer 
-      promiseFilterDataResolve = new Promise((resolve, reject) => {
-        resolve('filter ok');
+      promiseSortDataResolve = new Promise((resolve, reject) => {
+        resolve('sort ok');
       });
     }
   }
 }
 
 // Méthode de génération du graph à partir d'un tableau de données filtrer par année 
-function GenerateGraph(data, isClickable, isRegion) {
+function DrawGraph(data, isClickable, isRegion) {
   console.log(data);
-  let svg;
-  if (isRegion) svg = svgGlobal;
-  else svg = svgRegion; 
+  let svgGraph;
+  if (isRegion) svgGraph = svgGlobal;
+  else svgGraph = svgRegion; 
 
   // Groupe et sous-groupe du graph
   const subgroups = Object.getOwnPropertyNames(data[0]).slice(1);
@@ -220,7 +220,7 @@ function GenerateGraph(data, isClickable, isRegion) {
   .domain(groups)
   .range([0, width2])
   .padding([0.2])
-  svg.append("g")
+  svgGraph.append("g")
   .attr("transform", `translate(0, ${height2})`)
   .call(d3.axisBottom(x).tickSize(0))
   .selectAll("text")  
@@ -233,7 +233,7 @@ function GenerateGraph(data, isClickable, isRegion) {
   const y = d3.scaleLinear()
   .domain([0, maxY])
   .range([ height2, 0 ]);
-  svg.append("g")
+  svgGraph.append("g")
   .call(d3.axisLeft(y));
   
   // Another scale for subgroup position?
@@ -247,7 +247,7 @@ function GenerateGraph(data, isClickable, isRegion) {
   .range(['#198D8E','#71E0E9'])
   
   // Show the bars
-  var slice = svg.append("g")
+  var slice = svgGraph.append("g")
   .selectAll("g")
   // Enter in data = loop group per group
   .data(data)
@@ -323,7 +323,7 @@ function GenerateGraph(data, isClickable, isRegion) {
         });
       
       svgRegion.selectAll('*').remove();
-      GenerateGraph(DataCompareElecGazDepartement, false, false);
+      DrawGraph(DataCompareElecGazDepartement, false, false);
       d3.select("#title_region").text('Consommation d\'électricité par département en MWh pour la région : ' +ligne.lblRegion);
     }
     else{
@@ -345,7 +345,7 @@ function GenerateGraph(data, isClickable, isRegion) {
   // Legende
   const lblLegend = ['Consommation totale d\'électricité', 'Consommation totale de gaz'];
   
-  var legend = svg.selectAll(".legend")
+  var legend = svgGraph.selectAll(".legend")
   .data(lblLegend)
   .enter().append("g")
   .attr("class", "legend")
@@ -365,11 +365,11 @@ function GenerateGraph(data, isClickable, isRegion) {
   .text(function(d) { return d; });
   
   // Axes Y label
-  svg.append("text")
+  svgGraph.append("text")
   .attr("class", "y label")
   .attr("text-anchor", "start")
-  .attr("y", - margin.top / 3)
-  .attr("x", - margin.left / 2)
+  .attr("y", - margin2.top / 3)
+  .attr("x", - margin2.left / 2)
   .text("Consommation (MWh)");
 }
 
@@ -383,27 +383,27 @@ function UpdateYear(annee){
     case '2016':
     DataDisplayed = DataCompareElecGazRegion2016;
     CurrentYearData = DataCompareElecGaz2016;
-    GenerateGraph(DataCompareElecGazRegion2016, true, true);
+    DrawGraph(DataCompareElecGazRegion2016, true, true);
     break;
     case '2017':
     DataDisplayed = DataCompareElecGazRegion2017;
     CurrentYearData = DataCompareElecGaz2017;
-    GenerateGraph(DataCompareElecGazRegion2017, true, true);
+    DrawGraph(DataCompareElecGazRegion2017, true, true);
     break;
     case '2018':
     DataDisplayed = DataCompareElecGazRegion2018;
     CurrentYearData = DataCompareElecGaz2018;
-    GenerateGraph(DataCompareElecGazRegion2018, true, true);
+    DrawGraph(DataCompareElecGazRegion2018, true, true);
     break;
     case '2019':
     DataDisplayed = DataCompareElecGazRegion2019;
     CurrentYearData = DataCompareElecGaz2019;
-    GenerateGraph(DataCompareElecGazRegion2019, true, true);
+    DrawGraph(DataCompareElecGazRegion2019, true, true);
     break;
     case '2020':
     DataDisplayed = DataCompareElecGazRegion2020;
     CurrentYearData = DataCompareElecGaz2020;
-    GenerateGraph(DataCompareElecGazRegion2020, true, true);
+    DrawGraph(DataCompareElecGazRegion2020, true, true);
     break;
     
     default:
@@ -413,13 +413,13 @@ function UpdateYear(annee){
 //#endregion Function
 
 //#region Traitement
-promiseLoadData2.then((resolve) => {
+promiseLoadCsv.then((resolve) => {
   console.log(resolve);
-  promiseFilterDataResolve.then((resolve) => {
+  promiseSortDataResolve.then((resolve) => {
     console.log(resolve);
     DataDisplayed = DataCompareElecGazRegion2020;
     CurrentYearData = DataCompareElecGaz2020;
-    GenerateGraph(DataCompareElecGazRegion2020, true, true);
+    DrawGraph(DataCompareElecGazRegion2020, true, true);
   });
 });
 //#endregion Traitement
