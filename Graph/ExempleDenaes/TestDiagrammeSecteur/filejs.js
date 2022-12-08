@@ -127,10 +127,10 @@ function GenerateGraph(data, value, div){
   
   // set the dimensions and margins of the graph
   const margin = {top: 100, right: 0, bottom: 0, left: 0},
-  width = 460 - margin.left - margin.right,
-  height = 460 - margin.top - margin.bottom,
+  width = 560 - margin.left - margin.right,
+  height = 560 - margin.top - margin.bottom,
   innerRadius = 90,
-  outerRadius = Math.min(width, height) / 2;   // the outerRadius goes from the middle of the SVG area to the border
+  outerRadius = Math.min(width, height) / 3;   // the outerRadius goes from the middle of the SVG area to the border
   
   // append the svg object
   const svg = d3.select(div)
@@ -191,7 +191,7 @@ function GenerateGraph(data, value, div){
   .attr("transform", function(d) { return (x(d.lblRegion) + x.bandwidth() / 2 + Math.PI) % (2 * Math.PI) < Math.PI ? "rotate(180)" : "rotate(0)"; })
   .style("font-size", "11px")
   .attr("alignment-baseline", "middle")
-  
+
 };
 
 function ChoixConso(typeconso){
