@@ -11,7 +11,7 @@
    crossorigin=""></script>
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/holtzy/D3-graph-gallery@master/LIB/d3-scale-radial.js"></script>
-  <script type="text/javascript" src="./TestJS.js"></script>
+  <script type="text/javascript" src="./TestJS.js" defer></script>
   <script type="text/javascript" src="./filejs.js" defer></script>
   <script src="carte.js" defer></script>
       <style>
@@ -43,7 +43,7 @@
 </head>
  <body>
     <div id="map"></div>
-    <p id="titleAdri">Consommation d'électricité par région en MWh</p>
+    <p id="title">Consommation d'électricité par région en MWh</p>
     <select onchange="UpdateYear(this.value)" name="Année" id="yearSelect">
         <option value="2016">2016</option>
         <option value="2017">2017</option>
@@ -55,7 +55,7 @@
     <div id="barplot_compare"></div>
     <p id="title_region"></p>
     <div id="barplot_compare_region"></div>
-    <p id="title">Consommation d'électricité ou de gaz par secteur et par région</p>
+
     <select onchange="ChoixConso(this.value)" name="typeconso" id="consoselect">
         <option value="gaz">Gaz</option>
         <option value="electricite">Electricité</option>
