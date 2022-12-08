@@ -1,3 +1,5 @@
+Projet réalisé par Adrien Jouve, Loick Ramadier et Fabien Fleisch
+
 lien site : https://denaesconsulting.fr/TSEB2ENERGIE/contact.html
 
 Lien du jeu de données :
