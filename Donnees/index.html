@@ -42,7 +42,9 @@
     </style>
 </head>
  <body>
+    <div style="display: flex; flex-direction: row;">
     <div id="map"></div>
+    <div style="flex-direction: column;">
     <p id="title">Consommation d'électricité par région en MWh</p>
     <select onchange="UpdateYear(this.value)" name="Année" id="yearSelect">
         <option value="2016">2016</option>
@@ -53,6 +55,8 @@
     </select>
     <div class="ToolTip"></div>
     <div id="barplot_compare"></div>
+    </div>
+</div>
     <p id="title_region"></p>
     <div id="barplot_compare_region"></div>
 
