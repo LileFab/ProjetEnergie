@@ -126,7 +126,7 @@ function GenerateGraph(data, value, div){
   console.log(data);
   
   // set the dimensions and margins of the graph
-  const margin = {top: 100, right: 0, bottom: 0, left: 0},
+  const margin = {top: 50, right: 0, bottom: 50, left: 0},
   width = 460 - margin.left - margin.right,
   height = 460 - margin.top - margin.bottom,
   innerRadius = 90,
